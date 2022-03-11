@@ -67,5 +67,3 @@ not_contains_label(labels, label) {
 }
 
 definedLabels := {[label, value] | some label; value := resource.metadata.labels[label]}
-
-allowedLabels := {[label, value] | some index; label := parameters.labels[index].key; value := parameters.labels[index].allowedvalue}

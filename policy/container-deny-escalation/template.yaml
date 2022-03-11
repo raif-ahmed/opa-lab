@@ -76,15 +76,13 @@ spec:
       }
 
       definedLabels := {[label, value] | some label; value := resource.metadata.labels[label]}
-
-      allowedLabels := {[label, value] | some index; label := parameters.labels[index].key; value := parameters.labels[index].allowedvalue}
     rego: |-
       package container_deny_escalation
 
-      import data.k8s
+      import data.k8s as common
 
       violation[{"msg": msg, "details": {}}] {
-        c := k8s.input_containers[_]
+        c := common.input_containers[_]
         c.securityContext.privileged
         msg := sprintf("Privileged container is not allowed: %v, securityContext: %v", [c.name, c.securityContext])
       }

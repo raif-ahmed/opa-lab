@@ -1,17 +1,20 @@
 # @title Required Labels
 #
 # This policy allows you to require certain labels are set on a resource.
-#
+# @enforcement deny
 # @parameter labels array object
-# @kinds Namespace apps/DaemonSet apps/Deployment apps/StatefulSet core/Pod
+# @kinds core/Namespace apps/DaemonSet apps/Deployment apps/StatefulSet
 
 package container_deny_not_allowed_labels
 
-import data.k8s
+import data.k8s as common
+
+allowedLabels := {[label, value] | some index; label := common.parameters.labels[index].key; value := common.parameters.labels[index].allowedvalue}
+
 
 violation[{"msg": msg, "details": {}}] {
 	# always the allowed labels will be larger than the defined labels
 	#some i
-	k8s.not_contains_label(k8s.allowedLabels, k8s.definedLabels[i])
-	msg := sprintf("label '%v':'%v', is not allowed.", [k8s.definedLabels[i][0], k8s.definedLabels[i][1]])
+	common.not_contains_label(allowedLabels, common.definedLabels[i])
+	msg := sprintf("label '%v':'%v', is not allowed.", [common.definedLabels[i][0], common.definedLabels[i][1]])
 }

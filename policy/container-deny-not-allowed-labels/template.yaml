@@ -2,12 +2,12 @@ apiVersion: templates.gatekeeper.sh/v1beta1
 kind: ConstraintTemplate
 metadata:
   creationTimestamp: null
-  name: containerdenylabels
+  name: containerdenynotallowedlabels
 spec:
   crd:
     spec:
       names:
-        kind: ContainerDenyLabels
+        kind: ContainerDenyNotAllowedLabels
       validation:
         openAPIV3Schema:
           properties:
@@ -83,20 +83,19 @@ spec:
       }
 
       definedLabels := {[label, value] | some label; value := resource.metadata.labels[label]}
-
-      allowedLabels := {[label, value] | some index; label := parameters.labels[index].key; value := parameters.labels[index].allowedvalue}
     rego: |-
-      package k8slabels
+      package container_deny_not_allowed_labels
 
-      import data.k8s
+      import data.k8s as common
+
+      allowedLabels := {[label, value] | some index; label := common.parameters.labels[index].key; value := common.parameters.labels[index].allowedvalue}
 
 
       violation[{"msg": msg, "details": {}}] {
-
-         # always the allowed labels will be larger than the defined labels
-         #some i
-         k8s.not_contains_label(k8s.allowedLabels,k8s.definedLabels[i])
-         msg := sprintf("label '%v':'%v', is not allowed.",[k8s.definedLabels[i][0],k8s.definedLabels[i][1]])
+        # always the allowed labels will be larger than the defined labels
+        #some i
+        common.not_contains_label(allowedLabels, common.definedLabels[i])
+        msg := sprintf("label '%v':'%v', is not allowed.", [common.definedLabels[i][0], common.definedLabels[i][1]])
       }
     target: admission.k8s.gatekeeper.sh
 status: {}
