@@ -1,0 +1,10 @@
+{
+   "parameters":{
+      "labels":[
+         {
+            "key":"app",
+            "allowedvalue":"valid"
+         }
+      ]
+   }
+}
