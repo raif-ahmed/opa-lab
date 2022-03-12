@@ -1,0 +1,5 @@
+---
+parameters:
+  labels:
+  - key: app
+    allowedRegex: ^valid$

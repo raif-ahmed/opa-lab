@@ -7,10 +7,10 @@
 
 package container_deny_escalation
 
-import data.k8s as common
+import data.lib.common as common_lib
 
 violation[{"msg": msg, "details": {}}] {
-	c := common.input_containers[_]
+	c := common_lib.input_containers[_]
 	c.securityContext.privileged
 	msg := sprintf("Privileged container is not allowed: %v, securityContext: %v", [c.name, c.securityContext])
 }

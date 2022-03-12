@@ -7,14 +7,16 @@
 
 package container_deny_not_allowed_labels
 
-import data.k8s as common
+import data.lib.common as common_lib
 
-allowedLabels := {[label, value] | some index; label := common.parameters.labels[index].key; value := common.parameters.labels[index].allowedvalue}
+allowedLabels := array.concat(common_lib.parameters.labels, common_lib.common_labels)
 
+definedLabels := common_lib.resource.metadata.labels
 
 violation[{"msg": msg, "details": {}}] {
-	# always the allowed labels will be larger than the defined labels
-	#some i
-	common.not_contains_label(allowedLabels, common.definedLabels[i])
-	msg := sprintf("label '%v':'%v', is not allowed.", [common.definedLabels[i][0], common.definedLabels[i][1]])
+	some key
+	value := definedLabels[key]
+	common_lib.not_contains_label(allowedLabels, key, value)
+	common_lib.not_common_label(key, value)
+	msg := sprintf("Label <%v: %v> does not satisfy allowed regex", [key, value])
 }
