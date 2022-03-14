@@ -4,4 +4,4 @@ metadata:
     labels:
       app: valid
       objectset.rio.cattle.io/hash: "71c9ae6ca6bfbc906f0c6e874adb6b18200914db"
-    name: test
+    name: test-ns

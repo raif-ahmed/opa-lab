@@ -3,4 +3,4 @@ kind: Namespace
 metadata:
     labels:
       app: not-valid
-    name: test
+    name: test-ns
