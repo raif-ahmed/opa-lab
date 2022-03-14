@@ -13,9 +13,6 @@ spec:
       - DaemonSet
       - Deployment
       - StatefulSet
-    scope: Namespaced
-    namespaces:
-    - test
   parameters:
     labels:
       - key: app
