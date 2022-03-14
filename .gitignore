@@ -12,3 +12,6 @@ test-data*.json
 *.api-txt
 *.exe
 *.log
+
+policy/**/constraint.yaml
+policy/**/template.yaml
