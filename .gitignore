@@ -2,6 +2,7 @@ _build
 _tracks
 
 opa-debug-js
+test-data*.json
 
 *.opp
 *.opx
