@@ -1,1 +1,1 @@
-konstraint create policy
+konstraint create policy-lab-solution
