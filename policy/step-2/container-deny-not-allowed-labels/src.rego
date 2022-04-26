@@ -9,7 +9,7 @@ package container_deny_not_allowed_labels
 
 import data.lib.common as common_lib
 
-allowedLabels := array.concat(common_lib.parameters.labels, common_lib.common_labels)
+allowedLabels := common_lib.parameters.labels
 
 definedLabels := common_lib.resource.metadata.labels
 

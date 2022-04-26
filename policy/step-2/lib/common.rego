@@ -10,6 +10,7 @@ common_labels := [
 	{"key": "app.kubernetes.io/part-of", "allowedRegex": "*"},
 	{"key": "app.kubernetes.io/managed-by", "allowedRegex": "*"},
 	{"key": "objectset.rio.cattle.io/hash", "allowedRegex": "*"},
+	{"key": "kubernetes.io/metadata.name", "allowedRegex": "*"}
 ]
 
 has_field(obj, field) {
