@@ -38,7 +38,7 @@ spec:
       value) {\n  not is_common_label(key, value)\n}\n\nhas_key(obj, key) { \n  _
       = obj[key]\n}\n\nnot_has_key(obj, key) {\n  not has_key(obj, key)\n}\n\ncontains_prefix(allowedPrefixes,
       value) {\n  # do not match if any allowedRegex is not defined, or is an empty
-      string\n  allowedPrefixes[_] != \"\"\n  startswith(allowedPrefixes[_], value)\n}
+      string\n  allowedPrefixes[_] != \"\"\n  startswith(value,allowedPrefixes[_])\n}
       else = false {\n  true\n}\n\nnot_contains_prefix(allowedPrefixes, value) {\n
       \ not contains_prefix(allowedPrefixes, value)\n}"
     rego: |-

@@ -1,7 +1,7 @@
 apiVersion: constraints.gatekeeper.sh/v1beta1
-kind: ContainerDenyEscalation
+kind: ContainerDenyEmptydirNoSizeLimit
 metadata:
-  name: containerdenyescalation
+  name: containerdenyemptydirnosizelimit
 spec:
   match:
     kinds:

@@ -3,7 +3,7 @@
 # @enforcement deny
 # @kinds apps/DaemonSet apps/Deployment apps/StatefulSet core/Pod
 
-package container_deny_escalation
+package container_deny_emptydir_no_size_limit
 
 import data.lib.common as common_lib
 
