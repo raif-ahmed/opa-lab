@@ -1,0 +1,15 @@
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: ContainerDenyNotAllowedServicePortPrefix
+metadata:
+  name: containerdenynotallowedserviceportprefix
+spec:
+  match:
+    kinds:
+    - apiGroups:
+      - ""
+      kinds:
+      - Service
+  parameters:
+    servicePortPrefix:
+      - svc-port-prefix-
+      - svc-port-pre-

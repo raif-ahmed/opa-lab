@@ -2,18 +2,18 @@ apiVersion: templates.gatekeeper.sh/v1beta1
 kind: ConstraintTemplate
 metadata:
   creationTimestamp: null
-  name: containerdenynotallowedlabels
+  name: containerdenynotallowedservices
 spec:
   crd:
     spec:
       names:
-        kind: ContainerDenyNotAllowedLabels
+        kind: ContainerDenyNotAllowedServices
       validation:
         openAPIV3Schema:
           properties:
-            labels:
+            servicePrefix:
               items:
-                type: object
+                type: string
               type: array
   targets:
   - libs:
@@ -49,20 +49,18 @@ spec:
       else = false {\n  true\n}\n\nnot_contains_prefix(allowedPrefixes, value) {\n
       \ not contains_prefix(allowedPrefixes, value)\n}"
     rego: |-
-      package container_deny_not_allowed_labels
+      package container_deny_not_allowed_service_port_prefix
 
       import data.lib.common as common_lib
 
-      allowedLabels := common_lib.parameters.labels
+      allowedServicePortPrefix := common_lib.parameters.servicePortPrefix
 
-      definedLabels := common_lib.resource.metadata.labels
+      definedServicePorts := common_lib.resource.spec.ports
 
       violation[{"msg": msg, "details": {}}] {
-        some key
-        value := definedLabels[key]
-        common_lib.not_contains_label(allowedLabels, key, value)
-        common_lib.not_common_label(key, value)
-        msg := sprintf("Label <%v: %v> does not satisfy allowed regex", [key, value])
+        portName := definedServicePorts.name
+        common_lib.not_contains_prefix(allowedServicePortPrefix, portName)
+        msg := sprintf("Port with name <%v> does not satisfy allowed service Prefix", [portName])
       }
     target: admission.k8s.gatekeeper.sh
 status: {}

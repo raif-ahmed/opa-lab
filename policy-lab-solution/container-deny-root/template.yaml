@@ -2,19 +2,12 @@ apiVersion: templates.gatekeeper.sh/v1beta1
 kind: ConstraintTemplate
 metadata:
   creationTimestamp: null
-  name: containerdenynotallowedlabels
+  name: containerdenyroot
 spec:
   crd:
     spec:
       names:
-        kind: ContainerDenyNotAllowedLabels
-      validation:
-        openAPIV3Schema:
-          properties:
-            labels:
-              items:
-                type: object
-              type: array
+        kind: ContainerDenyRoot
   targets:
   - libs:
     - "package lib.common\n\ndefault is_gatekeeper = false\n\ncommon_labels := [\n
@@ -49,20 +42,43 @@ spec:
       else = false {\n  true\n}\n\nnot_contains_prefix(allowedPrefixes, value) {\n
       \ not contains_prefix(allowedPrefixes, value)\n}"
     rego: |-
-      package container_deny_not_allowed_labels
+      package container_deny_root
 
       import data.lib.common as common_lib
 
-      allowedLabels := common_lib.parameters.labels
+      default runAsNonRoot_not_exists = true
+      default runAsUser_not_exists = true
+      default runAsGroup_not_exists = true
 
-      definedLabels := common_lib.resource.metadata.labels
+      container_root_user= true {
+        c := common_lib.input_containers[_]
+         common_lib.not_has_key(c.securityContext, "runAsNonRoot")
+           common_lib.not_has_key(c.securityContext, "runAsUser")
+           common_lib.not_has_key(c.securityContext, "runAsGroup")
+      }
+
+      container_root_user = true {
+        c := common_lib.input_containers[_]
+          c.securityContext.runAsNonRoot == false
+      }
+      container_root_user = true {
+        c := common_lib.input_containers[_]
+        c.securityContext.runAsUser == 0
+      }
+      container_root_user = true {
+        c := common_lib.input_containers[_]
+        c.securityContext.runAsGroup == 0
+      }
+
 
       violation[{"msg": msg, "details": {}}] {
-        some key
-        value := definedLabels[key]
-        common_lib.not_contains_label(allowedLabels, key, value)
-        common_lib.not_common_label(key, value)
-        msg := sprintf("Label <%v: %v> does not satisfy allowed regex", [key, value])
+
+        c := common_lib.input_containers[_]
+        container_root_user
+
+
+        msg := sprintf("Running container as root is not allowed, ensure you fix your securityContext %v", [c.securityContext] )
+
       }
     target: admission.k8s.gatekeeper.sh
 status: {}

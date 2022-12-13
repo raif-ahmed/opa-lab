@@ -24,6 +24,10 @@ spec:
           imagePullPolicy: Always
           securityContext:
             privileged: true
+            # try omitting or set following values
+            # runAsNonRoot: fasle
+            # runAsUser: 0
+            # runAsGroup: 0
           resources:
             requests:
               memory: "64Mi"

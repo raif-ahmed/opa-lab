@@ -87,6 +87,8 @@ contains_label(allowedLabels, key, value) {
 	true
 }
 
+
+
 not_contains_label(labels, key, value) {
 	not contains_label(labels, key, value)
 }
@@ -100,4 +102,24 @@ is_common_label(key, value) {
 
 not_common_label(key, value) {
 	not is_common_label(key, value)
+}
+
+has_key(obj, key) { 
+	_ = obj[key]
+}
+
+not_has_key(obj, key) {
+	not has_key(obj, key)
+}
+
+contains_prefix(allowedPrefixes, value) {
+	# do not match if any allowedRegex is not defined, or is an empty string
+	allowedPrefixes[_] != ""
+	startswith(value,allowedPrefixes[_])
+} else = false {
+	true
+}
+
+not_contains_prefix(allowedPrefixes, value) {
+	not contains_prefix(allowedPrefixes, value)
 }
