@@ -35,3 +35,6 @@ spec:
             limits:
               memory: "128Mi"
               cpu: "500m"
+      volumes:
+      - name: container-storage
+        emptyDir: {}  

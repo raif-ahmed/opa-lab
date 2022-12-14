@@ -8,7 +8,8 @@ package container_deny_emptydir_no_size_limit
 import data.lib.common as common_lib
 
 violation[{"msg": msg, "details": {}}] {
-	c := common_lib.input_containers[_]
-	c.securityContext.privileged
-	msg := sprintf("Privileged container is not allowed: %v, securityContext: %v", [c.name, c.securityContext])
+	v := common_lib.input_volumes[_]
+	common_lib.has_key(v,"emptyDir")
+	common_lib.not_has_key(v.emptyDir,"sizeLimit")
+	msg := sprintf("Container %v, has an emptyDir but didn't specify sizeLimit", [v.name])
 }

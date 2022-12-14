@@ -28,7 +28,8 @@ spec:
       = input.parameters {\n  is_gatekeeper\n}\n\ninput_containers[c] {\n  c := resource.spec.containers[_]\n}\n\ninput_containers[c]
       {\n  c := resource.spec.initContainers[_]\n}\n\ninput_containers[c] {\n  c :=
       resource.spec.template.spec.containers[_]\n}\n\ninput_containers[c] {\n  c :=
-      resource.spec.template.spec.initContainers[_]\n}\n\ncontains_label(allowedLabels,
+      resource.spec.template.spec.initContainers[_]\n}\n\ninput_volumes[v] {\n  v
+      := resource.spec.volumes[_]\n}\n\ninput_volumes[v] {\n  v := resource.spec.template.spec.volumes[_]\n}\n\ncontains_label(allowedLabels,
       key, value) {\n  allowedLabels[_].key == key\n\n  # do not match if any allowedRegex
       is not defined, or is an empty string\n  allowedLabels[_].allowedRegex != \"\"\n
       \ re_match(allowedLabels[_].allowedRegex, value)\n} else = false {\n  true\n}\n\n\n\nnot_contains_label(labels,

@@ -77,6 +77,16 @@ input_containers[c] {
 	c := resource.spec.template.spec.initContainers[_]
 }
 
+# For Pod Volumes
+input_volumes[v] {
+	v := resource.spec.volumes[_]
+}
+
+# For Templated Pod Volumes
+input_volumes[v] {
+	v := resource.spec.template.spec.volumes[_]
+}
+
 contains_label(allowedLabels, key, value) {
 	allowedLabels[_].key == key
 

@@ -7,7 +7,7 @@ spec:
   crd:
     spec:
       names:
-        kind: ContainerDenyEmptydirNoSizeLimit
+        kind: ContainerDenyEmptyDirNoSizeLimit
   targets:
   - libs:
     - "package lib.common\n\ndefault is_gatekeeper = false\n\ncommon_labels := [\n
@@ -28,7 +28,8 @@ spec:
       = input.parameters {\n  is_gatekeeper\n}\n\ninput_containers[c] {\n  c := resource.spec.containers[_]\n}\n\ninput_containers[c]
       {\n  c := resource.spec.initContainers[_]\n}\n\ninput_containers[c] {\n  c :=
       resource.spec.template.spec.containers[_]\n}\n\ninput_containers[c] {\n  c :=
-      resource.spec.template.spec.initContainers[_]\n}\n\ncontains_label(allowedLabels,
+      resource.spec.template.spec.initContainers[_]\n}\n\ninput_volumes[v] {\n  v
+      := resource.spec.volumes[_]\n}\n\ninput_volumes[v] {\n  v := resource.spec.template.spec.volumes[_]\n}\n\ncontains_label(allowedLabels,
       key, value) {\n  allowedLabels[_].key == key\n\n  # do not match if any allowedRegex
       is not defined, or is an empty string\n  allowedLabels[_].allowedRegex != \"\"\n
       \ re_match(allowedLabels[_].allowedRegex, value)\n} else = false {\n  true\n}\n\n\n\nnot_contains_label(labels,
@@ -47,9 +48,10 @@ spec:
       import data.lib.common as common_lib
 
       violation[{"msg": msg, "details": {}}] {
-        c := common_lib.input_containers[_]
-        c.securityContext.privileged
-        msg := sprintf("Privileged container is not allowed: %v, securityContext: %v", [c.name, c.securityContext])
+        v := common_lib.input_volumes[_]
+        common_lib.has_key(v,"emptyDir")
+        common_lib.not_has_key(v.emptyDir,"sizeLimit")
+        msg := sprintf("Container %v, has an emptyDir but didn't specify sizeLimit", [v.name])
       }
     target: admission.k8s.gatekeeper.sh
 status: {}

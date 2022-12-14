@@ -17,6 +17,11 @@ yq input/deployment/opa-example-deployment_invalid.yaml   | conftest test --all-
 yq input/service/opa-example-service_valid.yaml  data/input-service-prefixes.yaml   | conftest test --all-namespaces -o table --combine -p policy-lab-solution/lib -p policy-lab-solution/container-deny-not-allowed-service-port-prefix -
 yq input/service/opa-example-service_invalid.yaml  data/input-service-prefixes.yaml   | conftest test --all-namespaces -o table --combine -p policy-lab-solution/lib -p policy-lab-solution/container-deny-not-allowed-service-port-prefix -
 
+# container-deny-emptydir-no-size-limit
+yq input/service/opa-example-service_valid.yaml  data/input-service-prefixes.yaml   | conftest test --all-namespaces -o table --combine -p policy-lab-solution/lib -p policy-lab-solution/ -
+yq input/service/opa-example-service_invalid.yaml  data/input-service-prefixes.yaml   | conftest test --all-namespaces -o table --combine -p policy-lab-solution/lib -p policy-lab-solution/ -
+
+
 # all tests togther on all files
 yq input/deployment/opa-example-deployment_valid.yaml   data/input-labels.yaml   | conftest test --all-namespaces -o table --combine -p policy-lab-solution -
 yq input/deployment/opa-example-deployment_invalid.yaml data/input-labels.yaml   | conftest test --all-namespaces -o table --combine -p policy-lab-solution -
