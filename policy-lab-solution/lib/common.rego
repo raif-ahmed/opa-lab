@@ -97,8 +97,6 @@ contains_label(allowedLabels, key, value) {
 	true
 }
 
-
-
 not_contains_label(labels, key, value) {
 	not contains_label(labels, key, value)
 }
