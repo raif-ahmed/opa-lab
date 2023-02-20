@@ -23,7 +23,7 @@ spec:
         {"key": "app.kubernetes.io/part-of", "allowedRegex": "*"},
         {"key": "app.kubernetes.io/managed-by", "allowedRegex": "*"},
         {"key": "objectset.rio.cattle.io/hash", "allowedRegex": "*"},
-        {"key": "kubernetes.io/metadata.name", "allowedRegex": "*"}
+        {"key": "kubernetes.io/metadata.name", "allowedRegex": "*"},
       ]
 
       has_field(obj, field) {
@@ -67,6 +67,15 @@ spec:
       }
 
       parameters = input.parameters {
+        is_gatekeeper
+      }
+
+      inventory = input[1].contents.inventory {
+        not is_gatekeeper
+        is_combined
+      }
+
+      inventory = data.inventory {
         is_gatekeeper
       }
 
@@ -130,7 +139,7 @@ spec:
       contains_prefix(allowedPrefixes, value) {
         # do not match if any allowedRegex is not defined, or is an empty string
         allowedPrefixes[_] != ""
-        startswith(value,allowedPrefixes[_])
+        startswith(value, allowedPrefixes[_])
       } else = false {
         true
       }
@@ -139,12 +148,12 @@ spec:
         not contains_prefix(allowedPrefixes, value)
       }
 
-      contains_array_elem(array, elem) {
-        array[_] = elem
-      }
+      contains_array_elem(array, elem) = true {
+        array[_] == elem
+      } else = false { true }
 
       not_contains_array_elem(array, elem) {
-       not contains_array_elem(array, elem)
+        not contains_array_elem(array, elem)
       }
     rego: |-
       package container_deny_root
@@ -152,38 +161,38 @@ spec:
       import data.lib.common as common_lib
 
       default runAsNonRoot_not_exists = true
+
       default runAsUser_not_exists = true
+
       default runAsGroup_not_exists = true
 
-      container_root_user= true {
+      container_root_user {
         c := common_lib.input_containers[_]
-         common_lib.not_has_key(c.securityContext, "runAsNonRoot")
-           common_lib.not_has_key(c.securityContext, "runAsUser")
-           common_lib.not_has_key(c.securityContext, "runAsGroup")
+        common_lib.not_has_key(c.securityContext, "runAsNonRoot")
+        common_lib.not_has_key(c.securityContext, "runAsUser")
+        common_lib.not_has_key(c.securityContext, "runAsGroup")
       }
 
-      container_root_user = true {
+      container_root_user {
         c := common_lib.input_containers[_]
-          c.securityContext.runAsNonRoot == false
+        c.securityContext.runAsNonRoot == false
       }
-      container_root_user = true {
+
+      container_root_user {
         c := common_lib.input_containers[_]
         c.securityContext.runAsUser == 0
       }
-      container_root_user = true {
+
+      container_root_user {
         c := common_lib.input_containers[_]
         c.securityContext.runAsGroup == 0
       }
 
-
       violation[{"msg": msg, "details": {}}] {
-
         c := common_lib.input_containers[_]
         container_root_user
 
-
-        msg := sprintf("Running container as root is not allowed, ensure you fix your securityContext %v", [c.securityContext] )
-
+        msg := sprintf("Running container as root is not allowed, ensure you fix your securityContext %v", [c.securityContext])
       }
     target: admission.k8s.gatekeeper.sh
 status: {}

@@ -23,7 +23,7 @@ spec:
         {"key": "app.kubernetes.io/part-of", "allowedRegex": "*"},
         {"key": "app.kubernetes.io/managed-by", "allowedRegex": "*"},
         {"key": "objectset.rio.cattle.io/hash", "allowedRegex": "*"},
-        {"key": "kubernetes.io/metadata.name", "allowedRegex": "*"}
+        {"key": "kubernetes.io/metadata.name", "allowedRegex": "*"},
       ]
 
       has_field(obj, field) {
@@ -67,6 +67,15 @@ spec:
       }
 
       parameters = input.parameters {
+        is_gatekeeper
+      }
+
+      inventory = input[1].contents.inventory {
+        not is_gatekeeper
+        is_combined
+      }
+
+      inventory = data.inventory {
         is_gatekeeper
       }
 
@@ -130,7 +139,7 @@ spec:
       contains_prefix(allowedPrefixes, value) {
         # do not match if any allowedRegex is not defined, or is an empty string
         allowedPrefixes[_] != ""
-        startswith(value,allowedPrefixes[_])
+        startswith(value, allowedPrefixes[_])
       } else = false {
         true
       }
@@ -139,12 +148,12 @@ spec:
         not contains_prefix(allowedPrefixes, value)
       }
 
-      contains_array_elem(array, elem) {
-        array[_] = elem
-      }
+      contains_array_elem(array, elem) = true {
+        array[_] == elem
+      } else = false { true }
 
       not_contains_array_elem(array, elem) {
-       not contains_array_elem(array, elem)
+        not contains_array_elem(array, elem)
       }
     rego: |-
       package container_deny_emptydir_no_size_limit
@@ -153,8 +162,8 @@ spec:
 
       violation[{"msg": msg, "details": {}}] {
         v := common_lib.input_volumes[_]
-        common_lib.has_key(v,"emptyDir")
-        common_lib.not_has_key(v.emptyDir,"sizeLimit")
+        common_lib.has_key(v, "emptyDir")
+        common_lib.not_has_key(v.emptyDir, "sizeLimit")
         msg := sprintf("Container %v, has an emptyDir but didn't specify sizeLimit", [v.name])
       }
     target: admission.k8s.gatekeeper.sh
