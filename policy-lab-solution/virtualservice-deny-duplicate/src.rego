@@ -30,7 +30,7 @@ violation[{"msg": msg, "details": {}}] {
 	
 
     some i
-	# first check if this is the same vs object
+	# first check if this is the same VirtualService object
     not identical(common_lib.resource,other_virtualservices)
 	# check that the host is not not defined in any of the vc defined in the cluster
 	common_lib.contains_array_elem(other_virtualservices.spec.hosts, common_lib.resource.spec.hosts[i])
