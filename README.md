@@ -187,3 +187,82 @@ First of all, let's see what happens when we deploy a privileged deployment with
 
 5. Delete the deployment again
 <img src="https://raw.githubusercontent.com/raif-ahmed/opa-lab/main/img/delete.JPG" width="200">
+
+
+https://open-policy-agent.github.io/gatekeeper/website/docs/sync/
+
+apiVersion: config.gatekeeper.sh/v1alpha1
+kind: Config
+metadata:
+  name: config
+  namespace: cattle-gatekeeper-system
+spec:
+  sync:
+    syncOnly:
+    - group: ""
+      kind: Namespace
+      version: v1
+    - group: networking.istio.io
+      kind: VirtualService
+      version: v1beta1
+
+
+
+audit:
+...
+auditChunkSize: 500
+auditFromCache: true (1)
+auditInterval: 60
+...
+
+
+https://engineering.sada.com/examining-gatekeeper-extracting-sample-input-for-opa-gatekeeper-policy-development-b96bda971d01
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: policy-review-test
+---
+apiVersion: templates.gatekeeper.sh/v1
+kind: ConstraintTemplate
+metadata:
+  name: blockandexportreview
+spec:
+  crd:
+    spec:
+      names:
+        kind: BlockAndExportReview
+      validation:
+        legacySchema: true
+        openAPIV3Schema:
+          properties:
+            exportData:
+              type: boolean
+          type: object
+  targets:
+  - rego: |
+      package blockandexportreview
+      violation[{"msg": msg}] {
+        data_export := get_data
+        msg := sprintf("Blocked to export objects:\nInput: %v%v", [input, data_export])
+      }
+      get_data = data_export {
+        input.parameters.exportInventoryData
+        data_export := sprintf(" \nData: {\"inventory\": %v}", [data.inventory])
+      }
+      get_data = data_export {
+        not input.parameters.exportInventoryData
+        data_export := ""
+      }
+    target: admission.k8s.gatekeeper.sh
+---
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: BlockAndExportReview
+metadata:
+  name: block-and-export-review-input
+spec:
+  match:
+    scope: Namespaced
+    namespaces: ["policy-review-test"]
+  parameters:
+    exportData: true

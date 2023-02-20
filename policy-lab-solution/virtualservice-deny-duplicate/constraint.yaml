@@ -1,0 +1,11 @@
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: VirtualserviceDenyDuplicate
+metadata:
+  name: virtualservicedenyduplicate
+spec:
+  match:
+    kinds:
+    - apiGroups:
+      - networking.istio.io
+      kinds:
+      - VirtualService

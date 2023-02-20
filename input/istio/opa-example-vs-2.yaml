@@ -1,0 +1,22 @@
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: vs-2
+  namespace: policy-review-test
+spec:
+  gateways:
+    - istio-system/istio-in-gateway-01
+  hosts:
+  - test-eiap-jaegertracing.global.gw01.aks01.eus.nonprod.azure.intra.co.com
+  http:
+  - name: tracing-v1-route
+    match:
+      - uri:
+          prefix: /
+    route:
+    - destination:
+        host: jaeger-backend-query.observability.svc.cluster.local
+        port: 
+          number: 16686
+

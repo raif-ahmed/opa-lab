@@ -10,38 +10,142 @@ spec:
         kind: ContainerDenyEscalation
   targets:
   - libs:
-    - "package lib.common\n\ndefault is_gatekeeper = false\n\ncommon_labels := [\n
-      \ {\"key\": \"app.kubernetes.io/name\", \"allowedRegex\": \"*\"},\n  {\"key\":
-      \"app.kubernetes.io/instance\", \"allowedRegex\": \"*\"},\n  {\"key\": \"app.kubernetes.io/version\",
-      \"allowedRegex\": \"*\"},\n  {\"key\": \"app.kubernetes.io/component\", \"allowedRegex\":
-      \"*\"},\n  {\"key\": \"app.kubernetes.io/part-of\", \"allowedRegex\": \"*\"},\n
-      \ {\"key\": \"app.kubernetes.io/managed-by\", \"allowedRegex\": \"*\"},\n  {\"key\":
-      \"objectset.rio.cattle.io/hash\", \"allowedRegex\": \"*\"},\n  {\"key\": \"kubernetes.io/metadata.name\",
-      \"allowedRegex\": \"*\"}\n]\n\nhas_field(obj, field) {\n  not object.get(obj,
-      field, \"N_DEFINED\") == \"N_DEFINED\"\n}\n\nmissing_field(obj, field) {\n  obj[field]
-      == \"\"\n}\n\nmissing_field(obj, field) {\n  not has_field(obj, field)\n}\n\nis_gatekeeper
-      {\n  has_field(input, \"review\")\n  has_field(input.review, \"object\")\n}\n\nis_combined
-      {\n  has_field(input[_], \"contents\")\n}\n\nresource = input.review.object
-      {\n  is_gatekeeper\n}\n\nresource = input {\n  not is_gatekeeper\n  not is_combined\n}\n\nresource
-      = input[0].contents {\n  not is_gatekeeper\n  is_combined\n}\n\nparameters =
-      input[1].contents.parameters {\n  not is_gatekeeper\n  is_combined\n}\n\nparameters
-      = input.parameters {\n  is_gatekeeper\n}\n\ninput_containers[c] {\n  c := resource.spec.containers[_]\n}\n\ninput_containers[c]
-      {\n  c := resource.spec.initContainers[_]\n}\n\ninput_containers[c] {\n  c :=
-      resource.spec.template.spec.containers[_]\n}\n\ninput_containers[c] {\n  c :=
-      resource.spec.template.spec.initContainers[_]\n}\n\ninput_volumes[v] {\n  v
-      := resource.spec.volumes[_]\n}\n\ninput_volumes[v] {\n  v := resource.spec.template.spec.volumes[_]\n}\n\ncontains_label(allowedLabels,
-      key, value) {\n  allowedLabels[_].key == key\n\n  # do not match if any allowedRegex
-      is not defined, or is an empty string\n  allowedLabels[_].allowedRegex != \"\"\n
-      \ re_match(allowedLabels[_].allowedRegex, value)\n} else = false {\n  true\n}\n\n\n\nnot_contains_label(labels,
-      key, value) {\n  not contains_label(labels, key, value)\n}\n\nis_common_label(key,
-      value) {\n  # as of now it is just equality but in future it can be regex\n
-      \ common_labels[_].key == key\n} else = false {\n  true\n}\n\nnot_common_label(key,
-      value) {\n  not is_common_label(key, value)\n}\n\nhas_key(obj, key) { \n  _
-      = obj[key]\n}\n\nnot_has_key(obj, key) {\n  not has_key(obj, key)\n}\n\ncontains_prefix(allowedPrefixes,
-      value) {\n  # do not match if any allowedRegex is not defined, or is an empty
-      string\n  allowedPrefixes[_] != \"\"\n  startswith(value,allowedPrefixes[_])\n}
-      else = false {\n  true\n}\n\nnot_contains_prefix(allowedPrefixes, value) {\n
-      \ not contains_prefix(allowedPrefixes, value)\n}"
+    - |-
+      package lib.common
+
+      default is_gatekeeper = false
+
+      common_labels := [
+        {"key": "app.kubernetes.io/name", "allowedRegex": "*"},
+        {"key": "app.kubernetes.io/instance", "allowedRegex": "*"},
+        {"key": "app.kubernetes.io/version", "allowedRegex": "*"},
+        {"key": "app.kubernetes.io/component", "allowedRegex": "*"},
+        {"key": "app.kubernetes.io/part-of", "allowedRegex": "*"},
+        {"key": "app.kubernetes.io/managed-by", "allowedRegex": "*"},
+        {"key": "objectset.rio.cattle.io/hash", "allowedRegex": "*"},
+        {"key": "kubernetes.io/metadata.name", "allowedRegex": "*"}
+      ]
+
+      has_field(obj, field) {
+        not object.get(obj, field, "N_DEFINED") == "N_DEFINED"
+      }
+
+      missing_field(obj, field) {
+        obj[field] == ""
+      }
+
+      missing_field(obj, field) {
+        not has_field(obj, field)
+      }
+
+      is_gatekeeper {
+        has_field(input, "review")
+        has_field(input.review, "object")
+      }
+
+      is_combined {
+        has_field(input[_], "contents")
+      }
+
+      resource = input.review.object {
+        is_gatekeeper
+      }
+
+      resource = input {
+        not is_gatekeeper
+        not is_combined
+      }
+
+      resource = input[0].contents {
+        not is_gatekeeper
+        is_combined
+      }
+
+      parameters = input[1].contents.parameters {
+        not is_gatekeeper
+        is_combined
+      }
+
+      parameters = input.parameters {
+        is_gatekeeper
+      }
+
+      input_containers[c] {
+        c := resource.spec.containers[_]
+      }
+
+      input_containers[c] {
+        c := resource.spec.initContainers[_]
+      }
+
+      input_containers[c] {
+        c := resource.spec.template.spec.containers[_]
+      }
+
+      input_containers[c] {
+        c := resource.spec.template.spec.initContainers[_]
+      }
+
+      input_volumes[v] {
+        v := resource.spec.volumes[_]
+      }
+
+      input_volumes[v] {
+        v := resource.spec.template.spec.volumes[_]
+      }
+
+      contains_label(allowedLabels, key, value) {
+        allowedLabels[_].key == key
+
+        # do not match if any allowedRegex is not defined, or is an empty string
+        allowedLabels[_].allowedRegex != ""
+        re_match(allowedLabels[_].allowedRegex, value)
+      } else = false {
+        true
+      }
+
+      not_contains_label(labels, key, value) {
+        not contains_label(labels, key, value)
+      }
+
+      is_common_label(key, value) {
+        # as of now it is just equality but in future it can be regex
+        common_labels[_].key == key
+      } else = false {
+        true
+      }
+
+      not_common_label(key, value) {
+        not is_common_label(key, value)
+      }
+
+      has_key(obj, key) {
+        _ = obj[key]
+      }
+
+      not_has_key(obj, key) {
+        not has_key(obj, key)
+      }
+
+      contains_prefix(allowedPrefixes, value) {
+        # do not match if any allowedRegex is not defined, or is an empty string
+        allowedPrefixes[_] != ""
+        startswith(value,allowedPrefixes[_])
+      } else = false {
+        true
+      }
+
+      not_contains_prefix(allowedPrefixes, value) {
+        not contains_prefix(allowedPrefixes, value)
+      }
+
+      contains_array_elem(array, elem) {
+        array[_] = elem
+      }
+
+      not_contains_array_elem(array, elem) {
+       not contains_array_elem(array, elem)
+      }
     rego: |-
       package container_deny_escalation
 

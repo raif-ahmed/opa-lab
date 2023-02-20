@@ -1,9 +1,25 @@
-# @title Required Labels
-#
-# This policy allows you to require certain labels are set on a resource.
-# @enforcement deny
-# @parameter labels array object
-# @kinds core/Namespace apps/DaemonSet apps/Deployment apps/StatefulSet
+# METADATA
+# title: Required Labels
+# description: >-
+#   This policy allows you to require certain labels are set on a resource.
+# custom:
+#   enforcement: deny
+#   matchers:
+#     kinds:
+#     - apiGroups:
+#       - apps
+#       - ""
+#       kinds:
+#       - DaemonSet
+#       - Deployment
+#       - StatefulSet
+#       - Pod
+#   parameters:
+#     labels:
+#       type: array
+#       description: Array of required label keys.
+#       items:
+#         type: object
 
 package container_deny_not_allowed_labels
 

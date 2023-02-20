@@ -10,7 +10,7 @@ common_labels := [
 	{"key": "app.kubernetes.io/part-of", "allowedRegex": "*"},
 	{"key": "app.kubernetes.io/managed-by", "allowedRegex": "*"},
 	{"key": "objectset.rio.cattle.io/hash", "allowedRegex": "*"},
-	{"key": "kubernetes.io/metadata.name", "allowedRegex": "*"}
+	{"key": "kubernetes.io/metadata.name", "allowedRegex": "*"},
 ]
 
 has_field(obj, field) {
@@ -54,6 +54,15 @@ parameters = input[1].contents.parameters {
 }
 
 parameters = input.parameters {
+	is_gatekeeper
+}
+
+inventory = input[1].contents.inventory {
+	not is_gatekeeper
+	is_combined
+}
+
+inventory = data.inventory {
 	is_gatekeeper
 }
 
@@ -112,7 +121,7 @@ not_common_label(key, value) {
 	not is_common_label(key, value)
 }
 
-has_key(obj, key) { 
+has_key(obj, key) {
 	_ = obj[key]
 }
 
@@ -123,11 +132,19 @@ not_has_key(obj, key) {
 contains_prefix(allowedPrefixes, value) {
 	# do not match if any allowedRegex is not defined, or is an empty string
 	allowedPrefixes[_] != ""
-	startswith(value,allowedPrefixes[_])
+	startswith(value, allowedPrefixes[_])
 } else = false {
 	true
 }
 
 not_contains_prefix(allowedPrefixes, value) {
 	not contains_prefix(allowedPrefixes, value)
+}
+
+contains_array_elem(array, elem) = true {
+  array[_] == elem
+} else = false { true }
+
+not_contains_array_elem(array, elem) {
+	not contains_array_elem(array, elem)
 }

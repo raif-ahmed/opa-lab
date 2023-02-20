@@ -6,10 +6,10 @@ spec:
   match:
     kinds:
     - apiGroups:
+      - apps
       - ""
       kinds:
-      - Service
-  parameters:
-    servicePortPrefix:
-      - svc-port-prefix-
-      - svc-port-pre-
+      - DaemonSet
+      - Deployment
+      - StatefulSet
+      - Pod

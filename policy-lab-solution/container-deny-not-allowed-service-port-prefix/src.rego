@@ -1,9 +1,19 @@
-# @title Required Labels
-#
-# This policy requires that service port names have a prefix from a specified list.
-# @enforcement deny
-# @parameter servicePrefix array string
-# @kinds core/Service
+# METADATA
+# title: Service Port prefix
+# description: >-
+#   This policy requires that service port names have a prefix from a specified list.
+# custom:
+#   enforcement: deny
+#   matchers:
+#     kinds:
+#     - apiGroups:
+#       - apps
+#       - ""
+#       kinds:
+#       - DaemonSet
+#       - Deployment
+#       - StatefulSet
+#       - Pod
 
 package container_deny_not_allowed_service_port_prefix
 

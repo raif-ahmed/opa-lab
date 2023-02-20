@@ -6,13 +6,13 @@ spec:
   match:
     kinds:
     - apiGroups:
-      - apps
       - ""
+      - apps
       kinds:
+      - Namespace
       - DaemonSet
       - Deployment
       - StatefulSet
-      - Pod
   parameters:
     labels:
       - key: app
