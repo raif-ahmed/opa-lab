@@ -30,10 +30,10 @@ violation[{"msg": msg, "details": {}}] {
 	# lets match all the group versions (v1beta1,v1,..) 
 	re_match("^networking.istio.io/.+$", gv)
 
-	some i
 	# first check if this is the same VirtualService object
 	not identical(common_lib.resource, other_virtualservice)
 	# check that the host is not not defined in any of the vc defined in the cluster
+	some i
 	common_lib.contains_array_elem(other_virtualservice.spec.hosts, common_lib.resource.spec.hosts[i])
 
 
