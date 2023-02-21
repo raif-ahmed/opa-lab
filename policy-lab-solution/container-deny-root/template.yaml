@@ -149,6 +149,23 @@ spec:
       not_contains_array_elem(array, elem) {
         not contains_array_elem(array, elem)
       }
+
+      identical_k8s_objects(obj1, obj2) {
+        has_field(obj1.metadata, "namespace")
+        has_field(obj2.metadata, "namespace")
+        obj1.metadata.namespace == obj2.metadata.namespace
+        obj1.metadata.name == obj2.metadata.name
+        obj1.kind == obj2.kind
+        obj1.apiVersion == obj2.apiVersion
+      }
+
+      identical_k8s_objects(obj1, obj2) {
+        missing_field(obj1.metadata, "namespace")
+        missing_field(obj2.metadata, "namespace")
+        obj1.metadata.name == obj2.metadata.name
+        obj1.kind == obj2.kind
+        obj1.apiVersion == obj2.apiVersion
+      }
     rego: |-
       package container_deny_root
 
