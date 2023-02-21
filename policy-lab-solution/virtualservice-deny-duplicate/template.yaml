@@ -171,18 +171,18 @@ spec:
         re_match("^networking.istio.io/.+$", common_lib.resource.apiVersion)
 
 
-          other_virtualservices := common_lib.inventory.namespace[_]["networking.istio.io/v1beta1"]["VirtualService"][name]
+          other_virtualservice := common_lib.inventory.namespace[_]["networking.istio.io/v1beta1"]["VirtualService"][name]
 
 
           some i
-        # first check if this is the same vs object
-          not identical(common_lib.resource,other_virtualservices)
+        # first check if this is the same VirtualService object
+          not identical(common_lib.resource,other_virtualservice)
         # check that the host is not not defined in any of the vc defined in the cluster
-        common_lib.contains_array_elem(other_virtualservices.spec.hosts, common_lib.resource.spec.hosts[i])
+        common_lib.contains_array_elem(other_virtualservice.spec.hosts, common_lib.resource.spec.hosts[i])
 
 
 
-        msg := sprintf("VirtualService host <%v> conflicts with an existing VirtualService name:<%v/%v>", [common_lib.resource.spec.hosts[i],other_virtualservices.metadata.namespace,other_virtualservices.metadata.name])
+        msg := sprintf("VirtualService host <%v> conflicts with an existing VirtualService name:<%v/%v>", [common_lib.resource.spec.hosts[i],other_virtualservice.metadata.namespace,other_virtualservice.metadata.name])
 
 
       }
