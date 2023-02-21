@@ -1,0 +1,14 @@
+apiVersion: config.gatekeeper.sh/v1alpha1
+kind: Config
+metadata:
+  name: config
+  namespace: cattle-gatekeeper-system
+spec:
+  sync:
+    syncOnly:
+    - group: ""
+      kind: Namespace
+      version: v1
+    - group: networking.istio.io
+      kind: VirtualService
+      version: v1beta1
