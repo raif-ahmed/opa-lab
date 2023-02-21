@@ -117,14 +117,6 @@ not_common_label(key, value) {
 	not is_common_label(key, value)
 }
 
-has_key(obj, key) {
-	_ = obj[key]
-}
-
-not_has_key(obj, key) {
-	not has_key(obj, key)
-}
-
 contains_prefix(allowedPrefixes, value) {
 	# do not match if any allowedRegex is not defined, or is an empty string
 	allowedPrefixes[_] != ""

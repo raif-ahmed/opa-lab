@@ -124,14 +124,6 @@ spec:
         not is_common_label(key, value)
       }
 
-      has_key(obj, key) {
-        _ = obj[key]
-      }
-
-      not_has_key(obj, key) {
-        not has_key(obj, key)
-      }
-
       contains_prefix(allowedPrefixes, value) {
         # do not match if any allowedRegex is not defined, or is an empty string
         allowedPrefixes[_] != ""
@@ -173,8 +165,8 @@ spec:
 
       violation[{"msg": msg, "details": {}}] {
         v := common_lib.input_volumes[_]
-        common_lib.has_key(v, "emptyDir")
-        common_lib.not_has_key(v.emptyDir, "sizeLimit")
+        common_lib.has_field(v, "emptyDir")
+        common_lib.missing_field(v.emptyDir, "sizeLimit")
         msg := sprintf("Container %v, has an emptyDir but didn't specify sizeLimit", [v.name])
       }
     target: admission.k8s.gatekeeper.sh

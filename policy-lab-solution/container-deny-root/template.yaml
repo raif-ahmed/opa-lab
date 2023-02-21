@@ -124,14 +124,6 @@ spec:
         not is_common_label(key, value)
       }
 
-      has_key(obj, key) {
-        _ = obj[key]
-      }
-
-      not_has_key(obj, key) {
-        not has_key(obj, key)
-      }
-
       contains_prefix(allowedPrefixes, value) {
         # do not match if any allowedRegex is not defined, or is an empty string
         allowedPrefixes[_] != ""
@@ -179,9 +171,9 @@ spec:
 
       container_root_user {
         c := common_lib.input_containers[_]
-        common_lib.not_has_key(c.securityContext, "runAsNonRoot")
-        common_lib.not_has_key(c.securityContext, "runAsUser")
-        common_lib.not_has_key(c.securityContext, "runAsGroup")
+        common_lib.missing_field(c.securityContext, "runAsNonRoot")
+        common_lib.missing_field(c.securityContext, "runAsUser")
+        common_lib.missing_field(c.securityContext, "runAsGroup")
       }
 
       container_root_user {

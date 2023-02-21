@@ -19,7 +19,7 @@ import data.lib.common as common_lib
 
 violation[{"msg": msg, "details": {}}] {
 	v := common_lib.input_volumes[_]
-	common_lib.has_key(v, "emptyDir")
-	common_lib.not_has_key(v.emptyDir, "sizeLimit")
+	common_lib.has_field(v, "emptyDir")
+	common_lib.missing_field(v.emptyDir, "sizeLimit")
 	msg := sprintf("Container %v, has an emptyDir but didn't specify sizeLimit", [v.name])
 }

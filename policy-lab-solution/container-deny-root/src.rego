@@ -35,9 +35,9 @@ default runAsGroup_not_exists = true
 
 container_root_user {
 	c := common_lib.input_containers[_]
-	common_lib.not_has_key(c.securityContext, "runAsNonRoot")
-	common_lib.not_has_key(c.securityContext, "runAsUser")
-	common_lib.not_has_key(c.securityContext, "runAsGroup")
+	common_lib.missing_field(c.securityContext, "runAsNonRoot")
+	common_lib.missing_field(c.securityContext, "runAsUser")
+	common_lib.missing_field(c.securityContext, "runAsGroup")
 }
 
 container_root_user {
