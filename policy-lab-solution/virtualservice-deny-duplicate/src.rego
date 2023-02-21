@@ -37,5 +37,5 @@ violation[{"msg": msg, "details": {}}] {
 	common_lib.contains_array_elem(other_virtualservice.spec.hosts, common_lib.resource.spec.hosts[i])
 
 
-	msg := sprintf("VirtualService host <%v> conflicts with an existing VirtualService name:<%v/%v>", [common_lib.resource.spec.hosts[i], other_virtualservice.metadata.namespace, other_virtualservice.metadata.name])
+	msg := sprintf("VirtualService host <%v> conflicts with a defined host in an existing VirtualService: <%v/%v>", [common_lib.resource.spec.hosts[i], other_virtualservice.metadata.namespace, other_virtualservice.metadata.name])
 }
