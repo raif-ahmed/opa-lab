@@ -28,7 +28,7 @@ violation[{"msg": msg, "details": {}}] {
 	not common_lib.identical_k8s_objects(common_lib.resource, other_virtualservice)
 
 	# check that the host is not not defined in any of the vc defined in the cluster
-	#some i
+	some i
 	common_lib.contains_array_elem(other_virtualservice.spec.hosts, common_lib.resource.spec.hosts[i])
 
 	msg := sprintf("VirtualService host <%v> conflicts with a defined host in an existing VirtualService: <%v/%v>", [common_lib.resource.spec.hosts[i], other_virtualservice.metadata.namespace, other_virtualservice.metadata.name])
