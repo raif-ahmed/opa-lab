@@ -102,9 +102,7 @@ contains_label(allowedLabels, key, value) {
 	# do not match if any allowedRegex is not defined, or is an empty string
 	allowedLabels[_].allowedRegex != ""
 	re_match(allowedLabels[_].allowedRegex, value)
-} else = false {
-	true
-}
+} else = false
 
 not_contains_label(labels, key, value) {
 	not contains_label(labels, key, value)
@@ -113,9 +111,7 @@ not_contains_label(labels, key, value) {
 is_common_label(key, value) {
 	# as of now it is just equality but in future it can be regex
 	common_labels[_].key == key
-} else = false {
-	true
-}
+} else = false
 
 not_common_label(key, value) {
 	not is_common_label(key, value)
@@ -133,17 +129,15 @@ contains_prefix(allowedPrefixes, value) {
 	# do not match if any allowedRegex is not defined, or is an empty string
 	allowedPrefixes[_] != ""
 	startswith(value, allowedPrefixes[_])
-} else = false {
-	true
-}
+} else = false
 
 not_contains_prefix(allowedPrefixes, value) {
 	not contains_prefix(allowedPrefixes, value)
 }
 
-contains_array_elem(array, elem) = true {
-  array[_] == elem
-} else = false { true }
+contains_array_elem(array, elem) {
+	array[_] == elem
+} else = false
 
 not_contains_array_elem(array, elem) {
 	not contains_array_elem(array, elem)
