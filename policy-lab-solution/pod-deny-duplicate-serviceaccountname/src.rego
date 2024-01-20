@@ -4,6 +4,9 @@
 #   This policy requires that service account is uniques for each workload per namespace.
 # custom:
 #   enforcement: deny
+#   scope: Namespaced
+#   namespaces:
+#     - test
 #   matchers:
 #     kinds:
 #     - apiGroups:

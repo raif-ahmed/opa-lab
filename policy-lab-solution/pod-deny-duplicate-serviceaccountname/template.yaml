@@ -2,20 +2,12 @@ apiVersion: templates.gatekeeper.sh/v1beta1
 kind: ConstraintTemplate
 metadata:
   creationTimestamp: null
-  name: containerdenynotallowedlabels
+  name: poddenyduplicateserviceaccountname
 spec:
   crd:
     spec:
       names:
-        kind: ContainerDenyNotAllowedLabels
-      validation:
-        openAPIV3Schema:
-          properties:
-            labels:
-              description: Array of required label keys.
-              items:
-                type: object
-              type: array
+        kind: PodDenyDuplicateServiceaccountname
   targets:
   - libs:
     - |-
@@ -217,20 +209,21 @@ spec:
         obj.kind == "CronJob"
       }
     rego: |-
-      package container_deny_not_allowed_labels
+      package pod_deny_duplicate_serviceaccountname
 
       import data.lib.common as common_lib
 
-      allowedLabels := common_lib.parameters.labels
+      violation[{"details": {}, "msg": msg}] {
+        common_lib.is_workload_type(common_lib.resource)
+        some i
+        common_lib.resource.metadata.namespace == common_lib.inventory.namespace[_][_][_][i].metadata.namespace
+        common_lib.resource.spec.template.spec.serviceAccountName == common_lib.inventory.namespace[_][_][_][i].spec.template.spec.serviceAccountName
+        other_workload := common_lib.inventory.namespace[_][_][_][i]
 
-      definedLabels := common_lib.resource.metadata.labels
+        # check if this is the same workload object
+        common_lib.not_identical_k8s_workload(common_lib.resource, other_workload)
 
-      violation[{"msg": msg, "details": {}}] {
-        some key
-        value := definedLabels[key]
-        common_lib.not_contains_label(allowedLabels, key, value)
-        common_lib.not_common_label(key, value)
-        msg := sprintf("Label <%v: %v> does not satisfy allowed regex", [key, value])
+        msg := sprintf("ServiceAccountName <%v> conflicts with a defined ServiceAccountName in an existing Workload <%v> of Kind <%v>", [common_lib.resource.spec.template.spec.serviceAccountName, other_workload.metadata.name, other_workload.kind])
       }
     target: admission.k8s.gatekeeper.sh
 status: {}

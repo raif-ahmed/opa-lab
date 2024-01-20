@@ -1,0 +1,20 @@
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: PodDenyDuplicateServiceaccountname
+metadata:
+  name: poddenyduplicateserviceaccountname
+spec:
+  match:
+    scope: Namespaced
+    namespaces:
+      - test
+    kinds:
+    - apiGroups:
+      - apps
+      - ""
+      kinds:
+      - DaemonSet
+      - Deployment
+      - ReplicaSet
+      - StatefulSet
+      - StatefulSet
+      - Pod

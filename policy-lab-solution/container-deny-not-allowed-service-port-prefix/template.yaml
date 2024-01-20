@@ -158,6 +158,56 @@ spec:
         obj1.kind == obj2.kind
         obj1.apiVersion == obj2.apiVersion
       }
+
+      similar_k8s_workload(deploy, obj) {
+          has_field(deploy.metadata, "namespace")
+        has_field(obj.metadata, "namespace")
+        deploy.metadata.namespace == obj.metadata.namespace
+        deploy.apiVersion == obj.apiVersion
+        # In case obj is replicatset, then it will start with deployment name with additional random chars
+        startswith(obj.metadata.name , deploy.metadata.name)
+      }
+
+      not_identical_k8s_workload(obj1, obj2){
+        obj1.kind == "Deployment"
+        not similar_k8s_workload(obj1 , obj2)
+      }
+
+
+      not_identical_k8s_workload(obj1, obj2){
+          obj1.kind != "Deployment"
+        not identical_k8s_objects(obj1, obj2)
+      }
+
+
+      is_workload_type(obj){
+        obj.apiVersion == "apps/v1"
+        obj.kind == "Deployment"
+      }
+      is_workload_type(obj){
+        obj.apiVersion == "apps/v1"
+        obj.kind == "ReplicaSet"
+      }
+      is_workload_type(obj){
+        obj.apiVersion == "apps/v1"
+        obj.kind == "StatefulSet"
+      }
+      is_workload_type(obj){
+        obj.apiVersion == "apps/v1"
+        obj.kind == "DaemonSet"
+      }
+      is_workload_type(obj){
+        obj.apiVersion == "batch/v1"
+        obj.kind == "Job"
+      }
+      is_workload_type(obj){
+        obj.apiVersion == "batch/v1"
+        obj.kind == "CronJob"
+      }
+      is_workload_type_cronJob(obj){
+        obj.apiVersion == "batch/v1"
+        obj.kind == "CronJob"
+      }
     rego: |-
       package container_deny_not_allowed_service_port_prefix
 
