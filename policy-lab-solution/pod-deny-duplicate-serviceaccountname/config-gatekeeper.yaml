@@ -1,0 +1,26 @@
+apiVersion: config.gatekeeper.sh/v1alpha1
+kind: Config
+metadata:
+  name: config
+  namespace: cattle-gatekeeper-system
+spec:
+  sync:
+    syncOnly:
+    - group: ""
+      kind: Namespace
+      version: v1
+    - group: batch
+      kind: Job
+      version: v1
+    - group: apps
+      kind: Deployment
+      version: v1
+    - group: apps
+      kind: ReplicaSet
+      version: v1
+    - group: apps
+      kind: StatefulSet
+      version: v1
+    - group: apps
+      kind: DaemonSet
+      version: v1        

@@ -1,5 +1,5 @@
 conftest fmt policy/
-# it is important to put the k8s conf first then paramters file as i parse based on index
+# it is important to put the k8s conf first then paramters or data file as i parse based on index
 # container-deny-escalation
 yq input/deployment/opa-example-deployment_valid.yaml     | conftest test --all-namespaces -o table --combine  -p policy-lab-solution/lib -p  policy-lab-solution/container-deny-escalation -
 yq input/deployment/opa-example-deployment_invalid.yaml   | conftest test --all-namespaces -o table --combine  -p policy-lab-solution/lib -p  policy-lab-solution/container-deny-escalation -
@@ -25,6 +25,9 @@ yq input/deployment/opa-example-deployment_invalid.yaml   | conftest test --all-
 # virtualservice-deny-duplicate
 yq input/istio/opa-example-vs-1.yaml   data/input-data-inventory.yaml  | conftest test --all-namespaces -o table --combine  -p policy-lab-solution/lib -p  policy-lab-solution/virtualservice-deny-duplicate -
 
+# pod-deny-duplicate-serviceaccount
+yq input/serviceaccountname/opa-example-deployment_invalid.yaml   data/input-data-inventory-1.yaml  | conftest test --trace --all-namespaces -o table --combine  -p policy-lab-solution/lib -p  policy-lab-solution/pod-deny-duplicate-serviceaccountname -
+yq input/serviceaccountname/opa-example-deployment_valid.yaml     data/input-data-inventory-1.yaml  | conftest test --all-namespaces -o table --combine  -p policy-lab-solution/lib -p  policy-lab-solution/pod-deny-duplicate-serviceaccountname -
 
 
 # all tests togther on all files
